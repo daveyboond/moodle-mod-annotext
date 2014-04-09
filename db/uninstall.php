@@ -18,14 +18,14 @@
 /**
  * @see uninstall_plugin()
  *
- * @package    mod_newmodule
- * @copyright  2011 Your Name <your@email.adress>
+ * @package    mod_annotext
+ * @copyright  2014 Steve Bond <your@email.adress>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Custom uninstallation procedure
  */
-function xmldb_newmodule_uninstall() {
+function xmldb_annotext_uninstall() {
     return true;
 }

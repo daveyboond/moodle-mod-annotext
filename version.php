@@ -17,20 +17,19 @@
 
 
 /**
- * Defines the version of newmodule
+ * Defines the version of annotext
  *
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php
  *
- * @package    mod_newmodule
- * @copyright  2011 Your Name
+ * @package    mod_annotext
+ * @copyright  2014 Steve Bond
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 0;               // If version == 0 then module will not be installed
-//$module->version   = 2010032200;      // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2010031900;      // Requires this Moodle version
+$module->version   = 2014040900;      // The current module version (Date: YYYYMMDDXX)
+$module->requires  = 2013110500;      // Requires this Moodle version
 $module->cron      = 0;               // Period for cron to check this module (secs)
-$module->component = 'mod_newmodule'; // To check on upgrade, that module sits in correct place
+$module->component = 'mod_annotext'; // To check on upgrade, that module sits in correct place

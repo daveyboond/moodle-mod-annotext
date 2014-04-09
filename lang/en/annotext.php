@@ -17,24 +17,24 @@
 
 
 /**
- * English strings for newmodule
+ * English strings for annotext
  *
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
- * @package    mod_newmodule
- * @copyright  2011 Your Name
+ * @package    mod_annotext
+ * @copyright  2014 Steve Bond
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['modulename'] = 'newmodule';
-$string['modulenameplural'] = 'newmodules';
-$string['modulename_help'] = 'Use the newmodule module for... | The newmodule module allows...';
-$string['newmodulefieldset'] = 'Custom example fieldset';
-$string['newmodulename'] = 'newmodule name';
-$string['newmodulename_help'] = 'This is the content of the help tooltip associated with the newmodulename field. Markdown syntax is supported.';
-$string['newmodule'] = 'newmodule';
-$string['pluginadministration'] = 'newmodule administration';
-$string['pluginname'] = 'newmodule';
+$string['modulename'] = 'annotext';
+$string['modulenameplural'] = 'annotexts';
+$string['modulename_help'] = 'Use the annotext module for... | The annotext module allows...';
+$string['annotextfieldset'] = 'Custom example fieldset';
+$string['annotextname'] = 'annotext name';
+$string['annotextname_help'] = 'This is the content of the help tooltip associated with the annotextname field. Markdown syntax is supported.';
+$string['annotext'] = 'annotext';
+$string['pluginadministration'] = 'annotext administration';
+$string['pluginname'] = 'annotext';
