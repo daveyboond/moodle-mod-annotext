@@ -17,10 +17,10 @@
 
 
 /**
- * Defines the version of newmodule
+ * English strings for newmodule
  *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
+ * You can have a rather longer description of the file as well,
+ * if you like, and it can span multiple lines.
  *
  * @package    mod_newmodule
  * @copyright  2011 Your Name
@@ -29,8 +29,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 0;               // If version == 0 then module will not be installed
-//$module->version   = 2010032200;      // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2010031900;      // Requires this Moodle version
-$module->cron      = 0;               // Period for cron to check this module (secs)
-$module->component = 'mod_newmodule'; // To check on upgrade, that module sits in correct place
+$string['modulename'] = 'newmodule';
+$string['modulenameplural'] = 'newmodules';
+$string['modulename_help'] = 'Use the newmodule module for... | The newmodule module allows...';
+$string['newmodulefieldset'] = 'Custom example fieldset';
+$string['newmodulename'] = 'newmodule name';
+$string['newmodulename_help'] = 'This is the content of the help tooltip associated with the newmodulename field. Markdown syntax is supported.';
+$string['newmodule'] = 'newmodule';
+$string['pluginadministration'] = 'newmodule administration';
+$string['pluginname'] = 'newmodule';

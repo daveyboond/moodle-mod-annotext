@@ -18,20 +18,22 @@
 /**
  * Definition of log events
  *
- * @package    mod_annotext
- * @category   log
- * @copyright  2014 Steve Bond
+ * NOTE: this is an example how to insert log event during installation/update.
+ * It is not really essential to know about it, but these logs were created as example
+ * in the previous 1.9 NEWMODULE.
+ *
+ * @package    mod_newmodule
+ * @copyright  2011 Your Name <your@email.adress>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-/*
+
+global $DB;
+
 $logs = array(
-    array('module'=>'choice', 'action'=>'view', 'mtable'=>'choice', 'field'=>'name'),
-    array('module'=>'choice', 'action'=>'update', 'mtable'=>'choice', 'field'=>'name'),
-    array('module'=>'choice', 'action'=>'add', 'mtable'=>'choice', 'field'=>'name'),
-    array('module'=>'choice', 'action'=>'report', 'mtable'=>'choice', 'field'=>'name'),
-    array('module'=>'choice', 'action'=>'choose', 'mtable'=>'choice', 'field'=>'name'),
-    array('module'=>'choice', 'action'=>'choose again', 'mtable'=>'choice', 'field'=>'name'),
+    array('module'=>'newmodule', 'action'=>'add', 'mtable'=>'newmodule', 'field'=>'name'),
+    array('module'=>'newmodule', 'action'=>'update', 'mtable'=>'newmodule', 'field'=>'name'),
+    array('module'=>'newmodule', 'action'=>'view', 'mtable'=>'newmodule', 'field'=>'name'),
+    array('module'=>'newmodule', 'action'=>'view all', 'mtable'=>'newmodule', 'field'=>'name')
 );
- */
