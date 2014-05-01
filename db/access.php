@@ -48,40 +48,41 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
-/***************************** remove these comment marks and modify the code as needed
-
-	'mod/annotext:addinstance' => array(
-			'riskbitmask' => RISK_XSS,
-	
-			'captype' => 'write',
-			'contextlevel' => CONTEXT_COURSE,
-			'archetypes' => array(
-					'editingteacher' => CAP_ALLOW,
-					'manager' => CAP_ALLOW
-			),
-			'clonepermissionsfrom' => 'moodle/course:manageactivities'
-	),
 
     'mod/annotext:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
+        'archetypes' => array(
             'guest' => CAP_ALLOW,
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     ),
 
-    'mod/annotext:submit' => array(
+    'mod/annotext:addinstance' => array(
+	'riskbitmask' => RISK_SPAM,
+	'captype' => 'write',
+	'contextlevel' => CONTEXT_COURSE,
+	'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:manageactivities'
+    ),
+    
+    // Edit the module settings, edit HTML content and annotations
+    'mod/annotext:manage' => array(
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
-            'student' => CAP_ALLOW
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
         )
+        'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
-******************************/
 );
 
