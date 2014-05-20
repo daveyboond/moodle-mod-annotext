@@ -70,8 +70,24 @@ if ($annotext->intro) { // Conditions to show the intro can change to look for o
     echo $OUTPUT->box(format_module_intro('annotext', $annotext, $cm->id), 'generalbox mod_introbox', 'annotextintro');
 }
 
-// Replace the following lines with you own code
-echo $OUTPUT->heading('Yay! It works!');
+/* Render the HTML from the module record, after substituting for custom markup */
+
+// Get the raw HTML and extract tags
+$htmlout = $annotext->html;
+
+while (preg_match('/id="at_(\d+)"/', $htmlout, $matches)) {
+    // Look up in the annotations table the id extracted
+    $annotation  = $DB->get_record('annotext_annotations', array('id' => $matches[1]), '*');
+    // Look up the category to get the highlighting colour
+    $category = $DB->get_record('annotext_categories', array('id' => $annotation->categoryid), '*');
+    $colourrgb = '#' . $category->colour;
+    // Replace the id tag with a style tag to highlight the text
+    $htmlout = preg_replace('/id="at_(\d+)"/', 'style="background-color:'.$colourrgb.';"', $htmlout, 1);
+    // (Later) add JS to the span element to create popup
+}
+
+// Output the processed HTML (THIS MAY NEED AN $OUTPUT CALL INSTEAD OF echo)
+echo $htmlout;
 
 // Finish the page
 echo $OUTPUT->footer();
