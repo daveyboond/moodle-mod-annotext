@@ -40,6 +40,8 @@ class mod_annotext_mod_form extends moodleform_mod {
      */
     public function definition() {
 
+        global $CFG, $DB, $OUTPUT;
+        
         $mform = $this->_form;
 
         //-------------------------------------------------------------------------------
@@ -47,26 +49,21 @@ class mod_annotext_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field
-        $mform->addElement('text', 'name', get_string('annotextname', 'annotext'), array('size'=>'64'));
-        if (!empty($CFG->formatstringstriptags)) {
-            $mform->setType('name', PARAM_TEXT);
-        } else {
-            $mform->setType('name', PARAM_CLEAN);
-        }
+        $mform->addElement('text', 'name', get_string('name'), array('size'=>'48'));
+        $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'annotextname', 'annotext');
 
         // Adding the standard "intro" and "introformat" fields
         $this->add_intro_editor();
 
         //-------------------------------------------------------------------------------
-        // Adding the rest of annotext settings, spreeading all them into this fieldset
-        // or adding more fieldsets ('header' elements) if needed for better logic
-        $mform->addElement('static', 'label1', 'annotextsetting1', 'Your annotext fields go here. Replace me!');
-
-        $mform->addElement('header', 'annotextfieldset', get_string('annotextfieldset', 'annotext'));
-        $mform->addElement('static', 'label2', 'annotextsetting2', 'Your annotext fields go here. Replace me!');
+        // Create a content section, and add a text field for the HTML (this is a basic
+        // first step - future versions will hopefully have built-in editing features)
+        $mform->addElement('header', 'contentsection', get_string('contentsection', 'annotext'));
+        $mform->addElement('textarea', 'html', get_string('html', 'annotext'), 'rows="20" cols="60"');
+        $mform->setType('name', PARAM_RAW);
+        $mform->addRule('html', get_string('required'), 'required', null, 'client');
 
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
