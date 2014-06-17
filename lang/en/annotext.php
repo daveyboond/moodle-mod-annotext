@@ -29,11 +29,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['modulename'] = 'annotext';
-$string['modulenameplural'] = 'annotexts';
-$string['modulename_help'] = 'Use the annotext module for... | The annotext module allows...';
-$string['annotext'] = 'annotext';
+$string['annotext:addinstance'] = 'Add a new annotated text';
+$string['annotext:manage'] = 'Manage annotated text activity';
+$string['annotext:view'] = 'View annotated text activity';
 $string['contentsection'] = 'Content';
 $string['html'] = 'HTML content';
-$string['pluginadministration'] = 'annotext administration';
-$string['pluginname'] = 'annotext';
+$string['modulename'] = 'Annotated text';
+$string['modulenameplural'] = 'Annotated texts';
+$string['modulename_help'] = 'Use the annotext module for... | The annotext module allows...';
+$string['pluginadministration'] = 'Annotext administration';
+$string['pluginname'] = 'Annotext';
