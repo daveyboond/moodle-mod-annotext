@@ -83,8 +83,11 @@ while (preg_match('/id="at_(\d+)"/', $htmlout, $matches)) {
     $colourrgb = '#' . $category->colour;
     // Replace the id tag with a style tag to highlight the text
     $htmlout = preg_replace('/id="at_(\d+)"/', 'style="background-color:'.$colourrgb.';"', $htmlout, 1);
-    // (Later) add JS to the span element to create popup
+    // (Later) add JS to the span element to create popup - use <span class="helptooltip">?
 }
+
+$PAGE->requires->yui_module('moodle-mod_annotext-popup', 'M.mod_annotext.popup.init');
+$htmlout .= '<div id="almastatus"><span class="alma_active">Popup</span></div>';
 
 // Output the processed HTML (THIS MAY NEED AN $OUTPUT CALL INSTEAD OF echo)
 echo $htmlout;
