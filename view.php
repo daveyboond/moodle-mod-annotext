@@ -87,9 +87,9 @@ while (preg_match('/id="at_(\d+)"/', $htmlout, $matches)) {
 }
 
 $PAGE->requires->yui_module('moodle-mod_annotext-popup', 'M.mod_annotext.popup.init');
-$htmlout .= '<div id="almastatus"><span class="alma_active">Popup</span></div>';
+$htmlout .= '<div id="at_77" class="annotation">Popup</div><div id="at_77_content" style="display:none">Popup content</div>';
 
-// Output the processed HTML (THIS MAY NEED AN $OUTPUT CALL INSTEAD OF echo)
+// Output the processed HTML
 echo $htmlout;
 
 // Finish the page
