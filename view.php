@@ -71,23 +71,30 @@ if ($annotext->intro) { // Conditions to show the intro can change to look for o
 }
 
 /* Render the HTML from the module record, after substituting for custom markup */
+$PAGE->requires->yui_module('moodle-mod_annotext-popup', 'M.mod_annotext.popup.init');
 
 // Get the raw HTML and extract tags
 $htmlout = $annotext->html;
 
-while (preg_match('/id="at_(\d+)"/', $htmlout, $matches)) {
+// I really need the following loop to deal with each span it finds in turn and in isolation. Perhaps by deconstructing htmlout one chunk at a time and putting it back together again. Then I need to make sure that the JS will work for more than just the first span on the page.
+
+//while (preg_match('/id="at_(\d+)"/', $htmlout, $matches)) {
+preg_match_all('/id="at_(\d+)"/', $htmlout, $matches, PREG_SET_ORDER);
+for ($a=0; $a<count($matches); $a++) {
     // Look up in the annotations table the id extracted
-    $annotation  = $DB->get_record('annotext_annotations', array('id' => $matches[1]), '*');
+    $annotation  = $DB->get_record('annotext_annotations', array('id' => $matches[$a][1]), '*');
+    // Add a hidden div containing the popup text after the target word
+    $htmlout = preg_replace('|<span '.$matches[$a][0].'>.*?</span>|i',
+        "$0" . '<div id="at_'.$matches[$a][1].'_content" style="display:none"><h2>'
+            .$annotation->title.'</h2><p>'.$annotation->html.'</p></div>', $htmlout, 1);
+    
     // Look up the category to get the highlighting colour
     $category = $DB->get_record('annotext_categories', array('id' => $annotation->categoryid), '*');
     $colourrgb = '#' . $category->colour;
     // Replace the id tag with a style tag to highlight the text
-    $htmlout = preg_replace('/id="at_(\d+)"/', 'style="background-color:'.$colourrgb.';"', $htmlout, 1);
-    // (Later) add JS to the span element to create popup - use <span class="helptooltip">?
+    $htmlout = preg_replace('/'.$matches[$a][0].'/', $matches[$a][0].' class="annotation" style="background-color:'
+        .$colourrgb.';"', $htmlout, 1);
 }
-
-$PAGE->requires->yui_module('moodle-mod_annotext-popup', 'M.mod_annotext.popup.init');
-$htmlout .= '<div id="at_77" class="annotation">Popup</div><div id="at_77_content" style="display:none">Popup content</div>';
 
 // Output the processed HTML
 echo $htmlout;
