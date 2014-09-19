@@ -70,30 +70,30 @@ if ($annotext->intro) { // Conditions to show the intro can change to look for o
     echo $OUTPUT->box(format_module_intro('annotext', $annotext, $cm->id), 'generalbox mod_introbox', 'annotextintro');
 }
 
-/* Render the HTML from the module record, after substituting for custom markup */
 $PAGE->requires->yui_module('moodle-mod_annotext-popup', 'M.mod_annotext.popup.init');
 
 // Get the raw HTML and extract tags
 $htmlout = $annotext->html;
 
-// I really need the following loop to deal with each span it finds in turn and in isolation. Perhaps by deconstructing htmlout one chunk at a time and putting it back together again. Then I need to make sure that the JS will work for more than just the first span on the page.
+// This loop looks for untouched <span> elements, adds highlighting to them,
+// and adds popup contents for each. The extra ">" in the initial pattern
+// avoids modification of already-modified spans.
+preg_match_all('/(id="at_(\d+)")>/', $htmlout, $matches, PREG_SET_ORDER);
 
-//while (preg_match('/id="at_(\d+)"/', $htmlout, $matches)) {
-preg_match_all('/id="at_(\d+)"/', $htmlout, $matches, PREG_SET_ORDER);
 for ($a=0; $a<count($matches); $a++) {
     // Look up in the annotations table the id extracted
-    $annotation  = $DB->get_record('annotext_annotations', array('id' => $matches[$a][1]), '*');
-    // Add a hidden div containing the popup text after the target word
-    $htmlout = preg_replace('|<span '.$matches[$a][0].'>.*?</span>|i',
-        "$0" . '<div id="at_'.$matches[$a][1].'_content" style="display:none"><h2>'
-            .$annotation->title.'</h2><p>'.$annotation->html.'</p></div>', $htmlout, 1);
+    $annotation  = $DB->get_record('annotext_annotations', array('id' => $matches[$a][2]), '*');
+    // Add a hidden div at the end, containing the popup text for this target word
+    $htmlout = preg_replace('|</body>|is',
+        '<div id="at_'.$matches[$a][2].'_content" style="display:none"><h2>'
+            .$annotation->title.'</h2>'.$annotation->html."</div>\n</body>", $htmlout, 1);
     
     // Look up the category to get the highlighting colour
     $category = $DB->get_record('annotext_categories', array('id' => $annotation->categoryid), '*');
     $colourrgb = '#' . $category->colour;
     // Replace the id tag with a style tag to highlight the text
-    $htmlout = preg_replace('/'.$matches[$a][0].'/', $matches[$a][0].' class="annotation" style="background-color:'
-        .$colourrgb.';"', $htmlout, 1);
+    $htmlout = preg_replace('/'.$matches[$a][0].'/', $matches[$a][1].' class="annotation" style="background-color:'
+        .$colourrgb.';">', $htmlout, 1);
 }
 
 // Output the processed HTML
