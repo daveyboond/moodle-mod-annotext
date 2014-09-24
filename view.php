@@ -70,7 +70,9 @@ if ($annotext->intro) { // Conditions to show the intro can change to look for o
     echo $OUTPUT->box(format_module_intro('annotext', $annotext, $cm->id), 'generalbox mod_introbox', 'annotextintro');
 }
 
+// Include JS stuff needed to display popups
 $PAGE->requires->yui_module('moodle-mod_annotext-popup', 'M.mod_annotext.popup.init');
+$PAGE->requires->string_for_js('modulename', 'mod_annotext');
 
 // Get the raw HTML and extract tags
 $htmlout = $annotext->html;
@@ -85,8 +87,8 @@ for ($a=0; $a<count($matches); $a++) {
     $annotation  = $DB->get_record('annotext_annotations', array('id' => $matches[$a][2]), '*');
     // Add a hidden div at the end, containing the popup text for this target word
     $htmlout = preg_replace('|</body>|is',
-        '<div id="at_'.$matches[$a][2].'_content" style="display:none"><h2>'
-            .$annotation->title.'</h2>'.$annotation->html."</div>\n</body>", $htmlout, 1);
+        '<div id="at_'.$matches[$a][2].'_content" style="display:none"><h3>'
+            .$annotation->title.'</h3>'.$annotation->html."</div>\n</body>", $htmlout, 1);
     
     // Look up the category to get the highlighting colour
     $category = $DB->get_record('annotext_categories', array('id' => $annotation->categoryid), '*');
