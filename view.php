@@ -66,13 +66,26 @@ $PAGE->set_context($context);
 // Output starts here
 echo $OUTPUT->header();
 
-if ($annotext->intro) { // Conditions to show the intro can change to look for own settings or whatever
-    echo $OUTPUT->box(format_module_intro('annotext', $annotext, $cm->id), 'generalbox mod_introbox', 'annotextintro');
+// Show the module intro
+if ($annotext->intro) {
+    echo $OUTPUT->box(format_module_intro('annotext', $annotext, $cm->id),
+        'generalbox mod_introbox', 'annotextintro');
 }
 
 // Include JS stuff needed to display popups
 $PAGE->requires->yui_module('moodle-mod_annotext-popup', 'M.mod_annotext.popup.init');
 $PAGE->requires->string_for_js('modulename', 'mod_annotext');
+
+// Find out what categories exist for this annotext
+$categories = $DB->get_records('annotext_categories', array('annotextid' => $annotext->id));
+
+// Create category checkboxes for toggling highlighting
+$categoryhtml = "";
+foreach ($categories as $cat) {
+    $categoryhtml .= '<div class="colourtab" style="border-color: #' . $cat->colour
+        . '" /><input id="' . $cat->id
+        . '" type="checkbox">' . $cat->title . '</input></div><br />' . "\n";
+}
 
 // Get the raw HTML and extract tags
 $htmlout = $annotext->html;
@@ -94,11 +107,11 @@ for ($a=0; $a<count($matches); $a++) {
     $category = $DB->get_record('annotext_categories', array('id' => $annotation->categoryid), '*');
     $colourrgb = '#' . $category->colour;
     // Replace the id tag with a style tag to highlight the text
-    $htmlout = preg_replace('/'.$matches[$a][0].'/', $matches[$a][1].' class="annotation" style="background-color:'
-        .$colourrgb.';">', $htmlout, 1);
+    $htmlout = preg_replace('/'.$matches[$a][0].'/', $matches[$a][1] . ' class="annotation cat'
+        . $annotation->categoryid . '" style="background-color:' . $colourrgb.';">', $htmlout, 1);
 }
-
 // Output the processed HTML
+echo $categoryhtml;
 echo $htmlout;
 
 // Finish the page
