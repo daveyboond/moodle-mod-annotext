@@ -79,16 +79,30 @@ $PAGE->requires->string_for_js('modulename', 'mod_annotext');
 // Find out what categories exist for this annotext
 $categories = $DB->get_records('annotext_categories', array('annotextid' => $annotext->id));
 
-// Create category checkboxes for toggling highlighting
+// Create category checkboxes for toggling highlighting, and a local stylesheet
+// for category colours
 $categoryhtml = "";
+$styles = "<style>\n";
+
 foreach ($categories as $cat) {
     $categoryhtml .= '<div class="colourtab" style="border-color: #' . $cat->colour
         . '" /><input id="' . $cat->id
         . '" type="checkbox">' . $cat->title . '</input></div><br />' . "\n";
+    $styles .= '.cat' . $cat->id . 'show { background-color: #' . $cat->colour . ";}\n";
 }
+
+$styles .= "</style>\n";
 
 // Get the raw HTML and extract tags
 $htmlout = $annotext->html;
+
+// Look for a <head> element and put the stylesheet inside it; otherwise
+// stick it on the front
+if (preg_match('|<head.*?>|',$htmlout)) {
+    $htmlout = preg_replace('|<head.*?>|', "$0" . "\n$styles", $htmlout);
+} else {
+    $htmlout = $styles . $htmlout;
+}
 
 // This loop looks for untouched <span> elements, adds highlighting to them,
 // and adds popup contents for each. The extra ">" in the initial pattern
@@ -108,7 +122,7 @@ for ($a=0; $a<count($matches); $a++) {
     $colourrgb = '#' . $category->colour;
     // Replace the id tag with a style tag to highlight the text
     $htmlout = preg_replace('/'.$matches[$a][0].'/', $matches[$a][1] . ' class="annotation cat'
-        . $annotation->categoryid . '" style="background-color:' . $colourrgb.';">', $htmlout, 1);
+        . $annotation->categoryid . ' cat' . $annotation->categoryid . 'show">', $htmlout, 1);
 }
 // Output the processed HTML
 echo $categoryhtml;
