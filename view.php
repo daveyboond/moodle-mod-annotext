@@ -75,7 +75,7 @@ $PAGE->requires->string_for_js('modulename', 'mod_annotext');
 $categories = $DB->get_records('annotext_categories', array('annotextid' => $annotext->id));
 
 // Create category checkboxes for toggling highlighting, and a local stylesheet
-// for category colours
+// for category colours. Checkboxes are unchecked at first.
 $categoryhtml = "";
 $styles = "<style>\n";
 
@@ -100,17 +100,15 @@ preg_match_all('/(id="at_(\d+)")>/', $htmlout, $matches, PREG_SET_ORDER);
 for ($a=0; $a<count($matches); $a++) {
     // Look up in the annotations table the id extracted
     $annotation  = $DB->get_record('annotext_annotations', array('id' => $matches[$a][2]), '*');
+    
     // Add a hidden div at the end, containing the popup text for this target word
     $htmlout = preg_replace('|</body>|is',
         '<div id="at_'.$matches[$a][2].'_content" style="display:none"><h3>'
             .$annotation->title.'</h3>'.$annotation->html."</div>\n</body>", $htmlout, 1);
     
-    // Look up the category to get the highlighting colour
-    $category = $DB->get_record('annotext_categories', array('id' => $annotation->categoryid), '*');
-    $colourrgb = '#' . $category->colour;
-    // Replace the id tag with a style tag to highlight the text
-    $htmlout = preg_replace('/'.$matches[$a][0].'/', $matches[$a][1] . ' class="annotation cat'
-        . $annotation->categoryid . ' cat' . $annotation->categoryid . 'show">', $htmlout, 1);
+    // Replace the id attribute with a class attribute to identify the category
+    $htmlout = preg_replace('/'.$matches[$a][0].'/', $matches[$a][1] . ' class="cat'
+        . $annotation->categoryid . '">', $htmlout, 1);
 }
 // Output the processed HTML
 echo $styles;
