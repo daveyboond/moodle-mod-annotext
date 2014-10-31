@@ -71,6 +71,17 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
+
+    'mod/annotext:import' => array(
+	'riskbitmask' => RISK_XSS,
+	'captype' => 'write',
+	'contextlevel' => CONTEXT_COURSE,
+	'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:manageactivities'
+    ),
     
     // Edit the module settings, edit HTML content and annotations
     'mod/annotext:manage' => array(

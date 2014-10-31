@@ -392,4 +392,10 @@ function annotext_extend_navigation(navigation_node $navref, stdclass $course, s
  * @param navigation_node $annotextnode {@link navigation_node}
  */
 function annotext_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $annotextnode=null) {
+    global $PAGE;
+
+    if (has_capability('mod/annotext:import', $PAGE->cm->context)) {
+        $annotextnode->add(get_string('import','annotext'), new moodle_url('/mod/annotext/import.php', array('id'=>$PAGE->cm->id)));
+    }
+
 }
