@@ -12,8 +12,8 @@ class mod_annotext_import_form extends moodleform {
         $mform =& $this->_form;
         $cmid = $this->_customdata['id'];
 
-        $mform->addElement('filepicker', 'file', get_string('filetoimport', 'glossary'));
-        $mform->addHelpButton('file', 'filetoimport', 'glossary');
+        $mform->addElement('filepicker', 'file', get_string('filetoimport', 'annotext'));
+        $mform->addHelpButton('file', 'filetoimport', 'annotext');
         $submit_string = get_string('submit');
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

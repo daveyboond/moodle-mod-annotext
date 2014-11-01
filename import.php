@@ -91,6 +91,25 @@ if (preg_match('|(^.*)<p>.*?Annotations.*?</p>(.*)<p>.*?Categories.*?</p>(.*$)|i
 echo "<p>Content:</p>$contenthtml<p>Annotations:</p>$annothtml<p>Categories:</p>$cathtml";
 
 // Convert lists of annotations and categories to arrays
+if (!preg_match_all('|(\d+):\s*(.*?)<|', $annothtml, $annotations, PREG_SET_ORDER)) {
+    echo $OUTPUT->box_start('generalbox');
+    echo "<p>Annotations are in the wrong format.</p>";
+    echo $OUTPUT->box_end();
+    die();    
+}
+
+foreach($annotations as $a){echo "<p>".$a[1]." - ".$a[2]."</p>";}
+
+if (!preg_match_all('|<p><span.*?style=["\']background:(.*?)["\'].*?>(.*?)</span></p>|',
+    $cathtml, $categories, PREG_SET_ORDER)) {
+    
+    echo $OUTPUT->box_start('generalbox');
+    echo "<p>Categories are in the wrong format.</p>";
+    echo $OUTPUT->box_end();
+    die();    
+}
+
+foreach($categories as $c){echo "<p>".$c[1]." - ".$c[2]."</p>";}
 
 // Verify that annotations and categories match content.
 
