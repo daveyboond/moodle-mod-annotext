@@ -50,7 +50,7 @@ if ( !$data = $form->get_data() ) {
     exit;
 }
 
-// Get content of uploaded file (CHARACTER ENCODING?)
+// Get content of uploaded file (which must be UTF-8)
 $result = $form->get_file_content('file');
 
 if (empty($result)) {
@@ -73,33 +73,21 @@ if (preg_match('|<body.*?>(.*?)</body>|is', $result, $matches)) {
 
 $bodyhtml = preg_replace('|<p.*?>|is', '<p>', $bodyhtml);
 
-// Separate the content, annotations and categories sections. Abort if any section
+// Separate the content and categories sections. Abort if either section
 // missing.
-if (preg_match('|(^.*)<p>.*?Annotations.*?</p>(.*)<p>.*?Categories.*?</p>(.*$)|is',
+if (preg_match('|(^.*)<p>.*?Categories.*?</p>(.*$)|is',
     $bodyhtml, $matches)) {
     
     $contenthtml = $matches[1];
-    $annothtml = $matches[2];
-    $cathtml = $matches[3];
+    $cathtml = $matches[2];
 } else {
     echo $OUTPUT->box_start('generalbox');
-    echo "<p>Could not find annotation and/or categories section.</p>";
+    echo "<p>Could not find categories section.</p>";
     echo $OUTPUT->box_end();
     die();
 }
 
-echo "<p>Content:</p>$contenthtml<p>Annotations:</p>$annothtml<p>Categories:</p>$cathtml";
-
-// Convert lists of annotations and categories to arrays
-if (!preg_match_all('|(\d+):\s*(.*?)<|', $annothtml, $annotations, PREG_SET_ORDER)) {
-    echo $OUTPUT->box_start('generalbox');
-    echo "<p>Annotations are in the wrong format.</p>";
-    echo $OUTPUT->box_end();
-    die();    
-}
-
-foreach($annotations as $a){echo "<p>".$a[1]." - ".$a[2]."</p>";}
-
+// Convert list of categories to array
 if (!preg_match_all('|<p><span.*?style=["\']background:(.*?)["\'].*?>(.*?)</span></p>|',
     $cathtml, $categories, PREG_SET_ORDER)) {
     
@@ -109,19 +97,95 @@ if (!preg_match_all('|<p><span.*?style=["\']background:(.*?)["\'].*?>(.*?)</span
     die();    
 }
 
-foreach($categories as $c){echo "<p>".$c[1]." - ".$c[2]."</p>";}
+// Extract the annotations from the content
+if (!preg_match_all('|<span.*?style=["\']background:(.*?)["\'].*?>(.*?)</span>\s*?\[(.*?)\]|is',
+    $contenthtml, $annotations, PREG_SET_ORDER)) {
+    
+    echo $OUTPUT->box_start('generalbox');
+    echo "<p>No annotations found in text.</p>";
+    echo $OUTPUT->box_end();
+    die();  
+}
 
-// Verify that annotations and categories match content.
+// Match highlight colours to category indicies, abort if no match
+foreach ($annotations as $a) {
+    $gotcat = false;
+    foreach ($categories as $c) {
+        if ($a[1] == $c[1]) {
+            $gotcat = true;
+            break;
+        }
+    }
+    if (!$gotcat) {
+        echo $OUTPUT->box_start('generalbox');
+        echo "<p>Highlight colours in text do not match category colours.</p>";
+        echo $OUTPUT->box_end();
+        die();
+    }
+}
 
-// Add annotations and categories to database. Put id numbers of the added records
-// back into the arrays.
+var_dump($annotations);
 
-// Step through content, picking up highlight span elements. Match the index number
-// to the annotation list to get annotation id. Match the highlighting colour to
-// the categories list to get category id.
+// Delete existing annotations and categories linked to the current annotext
+$oldcats = $DB->get_records("annotext_categories", array("annotextid"=>$annotext->id));
 
-// Convert the span element into the ‘at_#’ format. Add the category id into the
-// corresponding field in the annotations table.
+foreach ($oldcats as $oldcat) {
+    echo "will delete cat " . $oldcat->id;
+    $DB->delete_records("annotext_annotations", array("categoryid"=>$oldcat->id));
+    $DB->delete_records("annotext_categories", array("id"=>$oldcat->id));
+}
+
+// Add new categories to database. Put id numbers of the added records
+// back into the category array.
+foreach ($categories as &$cat) {
+    $newcat = new stdClass();
+    $newcat->annotextid = $annotext->id;
+    $newcat->title = $cat[2];
+    $newcat->colour = $cat[1];
+    $cat[3] = $DB->insert_record("annotext_categories", $newcat, true);
+}
+
+// Step through annotations, deconstructing the annotation, matching the
+// highlighting colour to the categories list to get category id, and adding
+// records to annotations table.
+foreach ($annotations as &$anno) {
+    // Check if there's a pipe in the annotation. If not, it's a backreference
+    // and nothing needs to be added to the database
+    if (preg_match('/(.*)\s*?\|\s*?(.*)/', $anno[3], $annobits)) {
+        // If the title is left blank, use the highlighted word as title
+        if (trim($annobits[1]) == false) {
+            $title = $anno[2];        
+        } else {
+            $title = $annobits[1];
+        }
+        $html = $annobits[2];
+        
+        // Find the category ID for this colour
+        foreach ($categories as $c) {
+            if ($anno[1] == $c[1]) {
+                $catid = $c[3];
+                break;
+            }
+        }
+        
+        // Create the data object to be added to database
+        $newanno = new stdClass();
+        $newanno->categoryid = $catid;
+        $newanno->title = $title;
+        $newanno->html = $html;
+        
+        // Add the record and collect the ID
+        $anno['id'] = $DB->insert_record("annotext_annotations", $newanno, true);
+
+    } else {
+        // Nothing to be added to database
+        $anno['id'] = 0;
+    }
+    
+}
+
+// Find the corresponding span elements in the content, and convert to
+// ‘at_#’ format.
 
 // Update the annotext table with the converted markup.
 
