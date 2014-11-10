@@ -61,7 +61,7 @@ if (empty($result)) {
     die();
 }
 
-// Strip out unwanted tags from the content
+// Isolate the HTML body
 if (preg_match('|<body.*?>(.*?)</body>|is', $result, $matches)) {
     $bodyhtml = $matches[1];
 } else {
@@ -71,7 +71,19 @@ if (preg_match('|<body.*?>(.*?)</body>|is', $result, $matches)) {
     die();
 }
 
+
+
+// Convert highlighting tags into a more convenient form
+// WHY IS THIS SO RAPACIOUS????!!!!
+$bodyhtml = preg_replace('|<span[^>]*?style=["\']background:(.*?)["\'].*?>(.*?)</span>|is',
+    "<tag $1>$2</tag>", $bodyhtml);
+
+// Tidy up p tags
 $bodyhtml = preg_replace('|<p.*?>|is', '<p>', $bodyhtml);
+
+// Remove all other span tags
+$bodyhtml = preg_replace('|<span.*?>|is', '', $bodyhtml);
+$bodyhtml = preg_replace('|</span>|is', '', $bodyhtml);
 
 // Separate the content and categories sections. Abort if either section
 // missing.
@@ -88,7 +100,7 @@ if (preg_match('|(^.*)<p>.*?Categories.*?</p>(.*$)|is',
 }
 
 // Convert list of categories to array
-if (!preg_match_all('|<p><span.*?style=["\']background:(.*?)["\'].*?>(.*?)</span></p>|',
+if (!preg_match_all('|<p><tag (.*?)>(.*?)</tag></p>|',
     $cathtml, $categories, PREG_SET_ORDER)) {
     
     echo $OUTPUT->box_start('generalbox');
@@ -98,7 +110,7 @@ if (!preg_match_all('|<p><span.*?style=["\']background:(.*?)["\'].*?>(.*?)</span
 }
 
 // Extract the annotations from the content
-if (!preg_match_all('|<span.*?style=["\']background:(.*?)["\'].*?>(.*?)</span>\s*?\[(.*?)\]|is',
+if (!preg_match_all('|<tag (.*?)>(.*?)</tag>\s*?\[(.*?)\]|is',
     $contenthtml, $annotations, PREG_SET_ORDER)) {
     
     echo $OUTPUT->box_start('generalbox');
@@ -124,13 +136,10 @@ foreach ($annotations as $a) {
     }
 }
 
-var_dump($annotations);
-
 // Delete existing annotations and categories linked to the current annotext
 $oldcats = $DB->get_records("annotext_categories", array("annotextid"=>$annotext->id));
 
 foreach ($oldcats as $oldcat) {
-    echo "will delete cat " . $oldcat->id;
     $DB->delete_records("annotext_annotations", array("categoryid"=>$oldcat->id));
     $DB->delete_records("annotext_categories", array("id"=>$oldcat->id));
 }
@@ -148,10 +157,12 @@ foreach ($categories as &$cat) {
 // Step through annotations, deconstructing the annotation, matching the
 // highlighting colour to the categories list to get category id, and adding
 // records to annotations table.
+
 foreach ($annotations as &$anno) {
-    // Check if there's a pipe in the annotation. If not, it's a backreference
-    // and nothing needs to be added to the database
-    if (preg_match('/(.*)\s*?\|\s*?(.*)/', $anno[3], $annobits)) {
+    // Check if there's a pipe in the annotation, and split on it (ignoring tags)
+    // if there is. If not, it's a backreference and nothing needs to be added
+    // to the database
+    if (preg_match('/([^>]*)\s*?\|\s*?([^<]*)/', $anno[3], $annobits)) {
         // If the title is left blank, use the highlighted word as title
         if (trim($annobits[1]) == false) {
             $title = $anno[2];        
@@ -184,8 +195,14 @@ foreach ($annotations as &$anno) {
     
 }
 
-// Find the corresponding span elements in the content, and convert to
+// Find the highlighting elements in the content, and convert them to
 // ‘at_#’ format.
+foreach ($annotations as $anno) {
+    $pattern = preg_quote($anno[0],'|');
+    echo "<p>{$anno[0]}</p>";
+    $replace = '<span id="at_'.$anno['id'].'">'.$anno[2].'</span>';
+    $contenthtml = preg_replace("|$pattern|is", $replace, $contenthtml);
+}
 
 // Update the annotext table with the converted markup.
 
