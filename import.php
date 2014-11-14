@@ -74,8 +74,7 @@ if (preg_match('|<body.*?>(.*?)</body>|is', $result, $matches)) {
 
 
 // Convert highlighting tags into a more convenient form
-// WHY IS THIS SO RAPACIOUS????!!!!
-$bodyhtml = preg_replace('|<span[^>]*?style=["\']background:(.*?)["\'].*?>(.*?)</span>|is',
+$bodyhtml = preg_replace('|<span[^>]*?style=["\']background:\s*(.*?)["\'].*?>(.*?)</span>|is',
     "<tag $1>$2</tag>", $bodyhtml);
 
 // Tidy up p tags
@@ -182,30 +181,39 @@ foreach ($annotations as &$anno) {
         // Create the data object to be added to database
         $newanno = new stdClass();
         $newanno->categoryid = $catid;
-        $newanno->title = $title;
-        $newanno->html = $html;
+        $newanno->title = trim($title);
+        $newanno->html = trim($html);
         
         // Add the record and collect the ID
         $anno['id'] = $DB->insert_record("annotext_annotations", $newanno, true);
 
     } else {
-        // Nothing to be added to database
-        $anno['id'] = 0;
+        // Nothing to be added to database, just refer back to the
+        // corresponding entry
+        if ($backanno = $DB->get_record_select("annotext_annotations",
+            'LOWER(title) = "' . strtolower(trim($anno[3])) . '"')) {
+            
+            $anno['id'] = $backanno->id;
+        } else {
+            echo $OUTPUT->box_start('generalbox');
+            echo "<p>There is a backreference to an annotation title that does not exist in ${anno[0]}.</p>";
+            echo $OUTPUT->box_end();
+            die();  
+        }
     }
-    
 }
 
 // Find the highlighting elements in the content, and convert them to
-// ‘at_#’ format.
-foreach ($annotations as $anno) {
-    $pattern = preg_quote($anno[0],'|');
-    echo "<p>{$anno[0]}</p>";
-    $replace = '<span id="at_'.$anno['id'].'">'.$anno[2].'</span>';
+// ‘at_#’ format. NB Trying to reuse $anno here caused problems, presumably
+// because it was passed by reference before, hence using $ann
+foreach ($annotations as $ann) {
+    $pattern = preg_quote($ann[0],'|');
+    $replace = '<span id="at_'.$ann['id'].'">'.$ann[2].'</span>';
     $contenthtml = preg_replace("|$pattern|is", $replace, $contenthtml);
 }
 
 // Update the annotext table with the converted markup.
-
+echo "<xmp>$contenthtml</xmp>";
 
 
 // Finish the page
