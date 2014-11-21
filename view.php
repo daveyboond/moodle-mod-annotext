@@ -80,11 +80,11 @@ $categoryhtml = "";
 $styles = "<style>\n";
 
 foreach ($categories as $cat) {
-    $categoryhtml .= '<div class="colourtab" style="border-color: #' . $cat->colour
+    $categoryhtml .= '<div class="colourtab" style="border-color: ' . $cat->colour
         . '" /><input id="' . $cat->id
         . '" type="checkbox" class="catbox">' . $cat->title
         . '</input></div><br />' . "\n";
-    $styles .= '.cat' . $cat->id . 'show { background-color: #' . $cat->colour . ";}\n";
+    $styles .= '.cat' . $cat->id . 'show { background-color: ' . $cat->colour . ";}\n";
 }
 
 $styles .= "</style>\n";

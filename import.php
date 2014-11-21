@@ -212,9 +212,22 @@ foreach ($annotations as $ann) {
     $contenthtml = preg_replace("|$pattern|is", $replace, $contenthtml);
 }
 
+// Replace the body tags because view.php needs them
+$contenthtml = "<body>\n" . $contenthtml . "\n</body>";
+
 // Update the annotext table with the converted markup.
 echo "<xmp>$contenthtml</xmp>";
 
+$newannotext = new stdClass();
+$newannotext->id = $annotext->id;
+$newannotext->html = $contenthtml;
+
+if (!$DB->update_record("annotext", $newannotext)) {
+    echo $OUTPUT->box_start('generalbox');
+    echo "<p>Failed to update annotext record id: " . $newannotext->id . "</p>";
+    echo $OUTPUT->box_end();
+    die();
+}
 
 // Finish the page
 echo $OUTPUT->footer();
