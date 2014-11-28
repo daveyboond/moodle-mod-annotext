@@ -43,3 +43,13 @@ $string['modulenameplural'] = 'Annotated texts';
 $string['modulename_help'] = 'Use the annotext module for... | The annotext module allows...';
 $string['pluginadministration'] = 'Annotext administration';
 $string['pluginname'] = 'Annotext';
+
+$string['error:colourmismatch'] = 'The highlight colour "{$a}" used in the text does not match any of the category colours.';
+$string['error:invalidid'] = 'Could not find an annotext instance for this course module.';
+$string['error:nobody'] = 'Could not find a <body> element in the imported HTML. Check input file against required format.';
+$string['error:noannotations'] = 'No annotations found in text. Check input file against required format.';
+$string['error:nocategories'] = 'Could not find categories section. Check input file against required format.';
+$string['error:updatefail'] = 'Failed to update annotext record id: {$a}.';
+$string['error:wrongcategoriesformat'] = 'Categories are in the wrong format. Check input file against required format.';
+
+$string['warning:orphanannotation'] = 'Warning: There is a backreference to an annotation title that does not exist in the annotation "{$a}". This annotation has been dropped (so the text in square brackets will be output instead).';

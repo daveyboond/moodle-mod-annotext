@@ -63,7 +63,6 @@ class mod_annotext_mod_form extends moodleform_mod {
         $mform->addElement('header', 'contentsection', get_string('contentsection', 'annotext'));
         $mform->addElement('textarea', 'html', get_string('html', 'annotext'), 'rows="20" cols="60"');
         $mform->setType('name', PARAM_RAW);
-        $mform->addRule('html', get_string('required'), 'required', null, 'client');
 
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
