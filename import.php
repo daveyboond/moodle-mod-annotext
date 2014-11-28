@@ -203,6 +203,7 @@ foreach ($annotations as $key => &$anno) {
             
             $anno['id'] = $backanno->id;
         } else {
+            // Backreference to non-existent title; drop this annotation from the array
             echo $OUTPUT->box_start('generalbox');
             echo "<p>" . get_string('warning:orphanannotation', 'annotext', $anno[0]) . "</p>";
             echo $OUTPUT->box_end();
