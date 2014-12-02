@@ -38,6 +38,7 @@ $string['filetoimport_help'] = 'Browse for and select the HTML file to import.';
 $string['html'] = 'HTML content';
 $string['import'] = 'Import from HTML';
 $string['importfromhtml'] = 'Import from HTML';
+$string['importsuccess'] = 'Import successful.';
 $string['modulename'] = 'Annotated text';
 $string['modulenameplural'] = 'Annotated texts';
 $string['modulename_help'] = 'Use the annotext module for... | The annotext module allows...';

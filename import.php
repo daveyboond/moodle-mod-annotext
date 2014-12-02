@@ -238,7 +238,7 @@ if (!$DB->update_record("annotext", $newannotext)) {
 }
 
 // Print continue button
-echo "<p>Import successful.</p>";
+echo "<p>" . get_string('importsuccess', 'annotext') . "</p>";
 echo $OUTPUT->continue_button('view.php?id=' . $cm->id);
 
 // Finish the page
