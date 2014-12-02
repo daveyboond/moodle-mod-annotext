@@ -61,8 +61,10 @@ class mod_annotext_mod_form extends moodleform_mod {
         // Create a content section, and add a text field for the HTML (this is a basic
         // first step - future versions will hopefully have built-in editing features)
         $mform->addElement('header', 'contentsection', get_string('contentsection', 'annotext'));
-        $mform->addElement('textarea', 'html', get_string('html', 'annotext'), 'rows="20" cols="60"');
-        $mform->setType('name', PARAM_RAW);
+        $mform->addElement('textarea', 'html', get_string('htmlcontent', 'annotext'), 'rows="20" cols="60"');
+        $mform->setType('html', PARAM_RAW);
+        $mform->addHelpButton('html', 'htmlcontent', 'annotext');
+
 
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
