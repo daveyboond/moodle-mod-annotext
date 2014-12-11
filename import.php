@@ -74,7 +74,7 @@ if (preg_match('|<body.*?>(.*?)</body>|is', $result, $matches)) {
 }
 
 // Convert highlighting tags into a more convenient form
-$bodyhtml = preg_replace('|<span[^>]*?style=["\']background:\s*(.*?)["\'].*?>(.*?)</span>|is',
+$bodyhtml = preg_replace('|<span[^>]*?style=["\'][^>]*?background:\s*(.*?)["\'].*?>(.*?)</span>|is',
     "<tag $1>$2</tag>", $bodyhtml);
 
 // Tidy up p tags
@@ -83,6 +83,9 @@ $bodyhtml = preg_replace('|<p.*?>|is', '<p>', $bodyhtml);
 // Remove all other span tags
 $bodyhtml = preg_replace('|<span.*?>|is', '', $bodyhtml);
 $bodyhtml = preg_replace('|</span>|is', '', $bodyhtml);
+
+// Remove excess whitespace
+$bodyhtml = preg_replace('/(\s)+/', ' ', $bodyhtml);
 
 // Separate the content and categories sections. Abort if categories section
 // missing.
@@ -169,7 +172,7 @@ foreach ($annotations as $key => &$anno) {
     // Check if there's a pipe in the annotation, and split on it (ignoring tags)
     // if there is. If not, it's a backreference and nothing needs to be added
     // to the database
-    if (preg_match('/([^>]*)\s*?\|\s*?([^<]*)/', $anno[3], $annobits)) {
+    if (preg_match('/^(.*?)\s*?\|\s*?(.*?)$/', $anno[3], $annobits)) {
         // If the title is left blank, use the highlighted word as title
         if (trim($annobits[1]) == false) {
             $title = $anno[2];        
@@ -177,7 +180,7 @@ foreach ($annotations as $key => &$anno) {
             $title = $annobits[1];
         }
         $html = $annobits[2];
-        
+
         // Find the category ID for this colour
         foreach ($categories as $c) {
             if ($anno[1] == $c[1]) {
