@@ -48,7 +48,7 @@ $string['pluginname'] = 'Annotext';
 
 $string['error:colourmismatch'] = 'The highlight colour "{$a}" used in the text does not match any of the category colours.';
 $string['error:invalidid'] = 'Could not find an annotext instance for this course module.';
-$string['error:nobody'] = 'Could not find a <body> element in the imported HTML. Check input file against required format.';
+$string['error:nobody'] = 'Could not find a &lt;body&gt; element in the imported HTML. Check input file against required format.';
 $string['error:noannotations'] = 'No annotations found in text. Check input file against required format.';
 $string['error:nocategories'] = 'Could not find categories section. Check input file against required format.';
 $string['error:updatefail'] = 'Failed to update annotext record id: {$a}.';

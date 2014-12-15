@@ -4,6 +4,7 @@ require_once("../../config.php");
 require_once("lib.php");
 require_once("$CFG->dirroot/course/lib.php");
 require_once('import_form.php');
+mb_internal_encoding("UTF-8");
 
 $id = required_param('id', PARAM_INT);    // Course Module ID
 
@@ -92,8 +93,10 @@ $bodyhtml = preg_replace('/(\s)+/', ' ', $bodyhtml);
 if (preg_match('|(^.*)<p>.*?Categories.*?</p>(.*$)|is',
     $bodyhtml, $matches)) {
     
-    $contenthtml = $matches[1];
-    $cathtml = $matches[2];
+    // I don't know why this conversion is necessary, but it's the only way
+    // I can stop database write errors when there are unusual characters
+    $contenthtml = mb_convert_encoding($matches[1], "UTF-8");
+    $cathtml = mb_convert_encoding($matches[2], "UTF-8");
 } else {
     echo $OUTPUT->box_start('generalbox');
     echo "<p>" . get_string('error:nocategories', 'annotext') . "</p>";
@@ -172,13 +175,16 @@ foreach ($annotations as $key => &$anno) {
     // Check if there's a pipe in the annotation, and split on it (ignoring tags)
     // if there is. If not, it's a backreference and nothing needs to be added
     // to the database
-    if (preg_match('/^(.*?)\s*?\|\s*?(.*?)$/', $anno[3], $annobits)) {
-        // If the title is left blank, use the highlighted word as title
-        if (trim($annobits[1]) == false) {
-            $title = $anno[2];        
+    if (preg_match('/^\h*(.*?)\h*\|\h*(.*?)\h*$/', $anno[3], $annobits)) {
+        // If the title is left blank, use the trimmed highlighted word as title.
+        // Using PCRE instead of trim, as there may be odd characters in the import
+        if (empty($annobits[1])) {
+            $title = $anno[2];
         } else {
             $title = $annobits[1];
         }
+        
+        $title = preg_replace('/^\h+|\h+$/', '', $title);        
         $html = $annobits[2];
 
         // Find the category ID for this colour
@@ -192,17 +198,20 @@ foreach ($annotations as $key => &$anno) {
         // Create the data object to be added to database
         $newanno = new stdClass();
         $newanno->categoryid = $catid;
-        $newanno->title = trim($title);
-        $newanno->html = trim($html);
+        $newanno->title = $title;
+        $newanno->html = $html;
         
         // Add the record and collect the ID
         $anno['id'] = $DB->insert_record("annotext_annotations", $newanno, true);
 
     } else {
         // Nothing to be added to database, just refer back to the
-        // corresponding entry
+        // corresponding entry        
+        $backref = preg_replace('/^\s+/', '', $anno[3]);
+        $backref = preg_replace('/\s+$/', '', $backref);
+            
         if ($backanno = $DB->get_record_select("annotext_annotations",
-            'LOWER(title) = "' . strtolower(trim($anno[3])) . '"')) {
+            'LOWER(title) = "' . strtolower($backref) . '"')) {
             
             $anno['id'] = $backanno->id;
         } else {
