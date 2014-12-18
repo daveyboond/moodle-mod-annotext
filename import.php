@@ -195,11 +195,16 @@ foreach ($annotations as $key => &$anno) {
             }
         }
         
-        // Create the data object to be added to database
+        // Create the data object to be added to database. I seem to have to convert to UTF-8
+        // again to make it work, no idea why!
         $newanno = new stdClass();
         $newanno->categoryid = $catid;
-        $newanno->title = $title;
+        $newanno->title = mb_convert_encoding($title, "UTF-8");
         $newanno->html = $html;
+        
+        echo '<xmp>';
+        var_dump($newanno);
+        echo '</xmp>';
         
         // Add the record and collect the ID
         $anno['id'] = $DB->insert_record("annotext_annotations", $newanno, true);
