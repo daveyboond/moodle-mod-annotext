@@ -78,6 +78,11 @@ if (preg_match('|<body.*?>(.*?)</body>|is', $result, $matches)) {
 $bodyhtml = preg_replace('|<span[^>]*?style=["\'][^>]*?background:\s*(.*?)["\'].*?>(.*?)</span>|is',
     "<tag $1>$2</tag>", $bodyhtml);
 
+// Get rid of empty tags (i.e. no text to highlight) and tags not followed by square
+// brackets (i.e. no annotation to associate)
+$bodyhtml = preg_replace('|<tag[^>]*?>(\h*?)</tag>|is', '$1', $bodyhtml);
+$bodyhtml = preg_replace('|<tag[^>]*?>([^<]*?)</tag>([^\[]*?<tag)|is', '$1$2', $bodyhtml);
+
 // Tidy up p tags
 $bodyhtml = preg_replace('|<p.*?>|is', '<p>', $bodyhtml);
 
@@ -87,6 +92,15 @@ $bodyhtml = preg_replace('|</span>|is', '', $bodyhtml);
 
 // Remove excess whitespace
 $bodyhtml = preg_replace('/(\s)+/', ' ', $bodyhtml);
+
+// Fix misplaced closing tags: Sometimes these find themselves on the wrong side of the
+// square bracket for annotations
+$bodyhtml = preg_replace('|\]\h*</i>|', '</i>]', $bodyhtml);
+$bodyhtml = preg_replace('|\]\h*</b>|', '</b>]', $bodyhtml);
+
+echo '<xmp>';
+echo $bodyhtml;
+echo '</xmp>';
 
 // Separate the content and categories sections. Abort if categories section
 // missing.
@@ -202,9 +216,9 @@ foreach ($annotations as $key => &$anno) {
         $newanno->title = mb_convert_encoding($title, "UTF-8");
         $newanno->html = $html;
         
-        echo '<xmp>';
+/*        echo '<xmp>';
         var_dump($newanno);
-        echo '</xmp>';
+        echo '</xmp>'; */
         
         // Add the record and collect the ID
         $anno['id'] = $DB->insert_record("annotext_annotations", $newanno, true);
@@ -229,7 +243,7 @@ foreach ($annotations as $key => &$anno) {
     }
 }
 
-// Find the highlighting elements in the content, and convert them to
+// Find the highlighting elements (<tag>) in the content, and convert them to
 // ‘at_#’ format. NB Trying to reuse $anno here caused problems, presumably
 // because it was passed by reference before, hence using $ann
 foreach ($annotations as $ann) {

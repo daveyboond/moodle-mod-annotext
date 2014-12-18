@@ -45,6 +45,7 @@ $string['modulenameplural'] = 'Annotated texts';
 $string['modulename_help'] = 'The Annotext module allows a teacher to upload a text containing annotations (in a specified format), and converts that text into an interactive format whereby a student can turn on and off different categories of annotation. The annotated words and phrases are highlighted in different colours according to category, and the student can click on any highlighted phrase to open a pop-up that displays the annotation for that word/phrase.';
 $string['pluginadministration'] = 'Annotext administration';
 $string['pluginname'] = 'Annotext';
+$string['print'] = 'Print';
 
 $string['error:colourmismatch'] = 'The highlight colour "{$a}" used in the text does not match any of the category colours.';
 $string['error:invalidid'] = 'Could not find an annotext instance for this course module.';
