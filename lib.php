@@ -399,4 +399,6 @@ function annotext_extend_settings_navigation(settings_navigation $settingsnav, n
         $annotextnode->add(get_string('import','annotext'), new moodle_url('/mod/annotext/import.php', array('id'=>$PAGE->cm->id)));
     }
 
+    $annotextnode->add(get_string('print','annotext'), new moodle_url('/mod/annotext/print.php', array('id'=>$PAGE->cm->id)));
+
 }

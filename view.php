@@ -43,7 +43,7 @@ if ($id) {
     $course     = $DB->get_record('course', array('id' => $annotext->course), '*', MUST_EXIST);
     $cm         = get_coursemodule_from_instance('annotext', $annotext->id, $course->id, false, MUST_EXIST);
 } else {
-    error('You must specify a course_module ID or an instance ID');
+    error(get_string('error:noparams', 'annotext'));
 }
 
 require_login($course, true, $cm);

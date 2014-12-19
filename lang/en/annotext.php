@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['annotext:addinstance'] = 'Add a new annotated text';
 $string['annotext:manage'] = 'Manage annotated text activity';
 $string['annotext:view'] = 'View annotated text activity';
+$string['categories'] = 'Categories';
 $string['contentsection'] = 'Content';
 $string['filetoimport'] = 'File to import';
 $string['filetoimport_help'] = 'Browse for and select the HTML file to import. The HTML file must be exported from a Word 2010 file in the correct format, exported using Windows Word 2010, using "Save As Filtered HTML", with text encoding set to UTF-8.';
@@ -45,13 +46,15 @@ $string['modulenameplural'] = 'Annotated texts';
 $string['modulename_help'] = 'The Annotext module allows a teacher to upload a text containing annotations (in a specified format), and converts that text into an interactive format whereby a student can turn on and off different categories of annotation. The annotated words and phrases are highlighted in different colours according to category, and the student can click on any highlighted phrase to open a pop-up that displays the annotation for that word/phrase.';
 $string['pluginadministration'] = 'Annotext administration';
 $string['pluginname'] = 'Annotext';
-$string['print'] = 'Print';
+$string['print'] = 'Print view';
+$string['text'] = 'Text';
 
 $string['error:colourmismatch'] = 'The highlight colour "{$a}" used in the text does not match any of the category colours.';
 $string['error:invalidid'] = 'Could not find an annotext instance for this course module.';
 $string['error:nobody'] = 'Could not find a &lt;body&gt; element in the imported HTML. Check input file against required format.';
 $string['error:noannotations'] = 'No annotations found in text. Check input file against required format.';
 $string['error:nocategories'] = 'Could not find categories section. Check input file against required format.';
+$string['error:noparams'] = 'You must specify a course_module ID or an instance ID.';
 $string['error:updatefail'] = 'Failed to update annotext record id: {$a}.';
 $string['error:wrongcategoriesformat'] = 'Categories are in the wrong format. Check input file against required format.';
 
