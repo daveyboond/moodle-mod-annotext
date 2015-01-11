@@ -96,12 +96,19 @@ for ($a=0; $a<count($matches); $a++) {
     // Get the index of this annotation
     $index = $matches[$a][2] - $offset;
     
+    // Skip this step if we already have this annotation
+    $refnum = '<div><strong>' . $index . ': ';
+    $pattern = '/' . $refnum . '/';
+    if (preg_match($pattern, $htmlout)) {
+        continue;
+    }
+    
     // Look up in the annotations table the id extracted
     $annotation  = $DB->get_record('annotext_annotations', array('id' => $matches[$a][2]), '*');
     
     // Add a div at the end, containing the annotation
-    $htmlout = preg_replace('|</body>|is', '<div><h4>' . $index . ': ' . $annotation->title
-         . '</h4>'. $annotation->html . "</div>\n</body>", $htmlout, 1);
+    $htmlout = preg_replace('|</body>|is', $refnum . $annotation->title
+         . '</strong><br />'. $annotation->html . "</div>\n</body>", $htmlout, 1);
     
     // Replace the id attribute with a class attribute to add highlighting and add a
     // superscript index at the end of the span
