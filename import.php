@@ -76,10 +76,10 @@ if (preg_match('|<body.*?>(.*?)</body>|is', $result, $matches)) {
 
 // Get rid of any background:white attributes (assuming that the background is
 // white, so these do not constitute highlighting)
-$bodyhtml = preg_replace('|background:white|is', "", $bodyhtml);
+$bodyhtml = preg_replace('|background\s*?:\s*?white|is', "", $bodyhtml);
 
 // Convert highlighting tags into a more convenient form
-$bodyhtml = preg_replace('|<span[^>]*?style=["\'][^>]*?background:\s*(.*?)["\'].*?>(.*?)</span>|is',
+$bodyhtml = preg_replace('|<span[^>]*?style=["\'][^>]*?background:\s*(.*?)["\';].*?>(.*?)</span>|is',
     "<tag $1>$2</tag>", $bodyhtml);
 
 // Get rid of empty tags (i.e. no text to highlight) and tags not followed by square
@@ -101,6 +101,12 @@ $bodyhtml = preg_replace('/(\s)+/', ' ', $bodyhtml);
 // square bracket for annotations
 $bodyhtml = preg_replace('|\]\h*</i>|', '</i>]', $bodyhtml);
 $bodyhtml = preg_replace('|\]\h*</b>|', '</b>]', $bodyhtml);
+
+// Move anything that lies between a tag and its square bracket, and put it
+// after the closing square bracket. This should preserve formatting, since
+// the square brackets should not contain any formatting of their own.
+$bodyhtml = preg_replace('|</tag>(.*?)(\[.*?\])|is', '</tag>$2$1', $bodyhtml);
+
 
 echo '<xmp>';
 echo $bodyhtml;
@@ -137,7 +143,7 @@ if (!preg_match_all('|<p><tag (.*?)>(.*?)</tag></p>|',
 }
 
 // Extract the annotations from the content
-if (!preg_match_all('!<tag (.*?)>(.*?)</tag>.*?\[(.*?)\]!is',
+if (!preg_match_all('!<tag (.*?)>(.*?)</tag>\[(.*?)\]!is',
     $contenthtml, $annotations, PREG_SET_ORDER)) {
     
     echo $OUTPUT->box_start('generalbox');
