@@ -74,6 +74,10 @@ if (preg_match('|<body.*?>(.*?)</body>|is', $result, $matches)) {
     exit;
 }
 
+// Get rid of any background:white attributes (assuming that the background is
+// white, so these do not constitute highlighting)
+$bodyhtml = preg_replace('|background:white|is', "", $bodyhtml);
+
 // Convert highlighting tags into a more convenient form
 $bodyhtml = preg_replace('|<span[^>]*?style=["\'][^>]*?background:\s*(.*?)["\'].*?>(.*?)</span>|is',
     "<tag $1>$2</tag>", $bodyhtml);
@@ -133,7 +137,7 @@ if (!preg_match_all('|<p><tag (.*?)>(.*?)</tag></p>|',
 }
 
 // Extract the annotations from the content
-if (!preg_match_all('|<tag (.*?)>(.*?)</tag>\s*?\[(.*?)\]|is',
+if (!preg_match_all('!<tag (.*?)>(.*?)</tag>.*?\[(.*?)\]!is',
     $contenthtml, $annotations, PREG_SET_ORDER)) {
     
     echo $OUTPUT->box_start('generalbox');
